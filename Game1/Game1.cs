@@ -116,26 +116,29 @@ namespace Game1
                 }
 
                 // Order agents by lowest fitness
-                agents = agents.OrderBy(p => p.Fitness).ToArray<Agent>();
+
+                if(!agents[0].ReachedGoal)
+                {
+                    agents = agents.OrderBy(p => p.Fitness).ToArray<Agent>();
+                }
+
+                
+                else // Order agents by lowest Actions
+                {
+                    agents = agents.OrderBy(p => p.ActionsToReachGoal).ToArray<Agent>();
+                }
 
                 // Remake a new population for the next generation
 
-                //Test
-
                 // This code only creates a new random population and must be changed in order for the agents to show progress over time.
-                for (int i = 0; i < numberOfAgents; i++)
-                {
-                    agents[i] = new Agent(new List<Vector2>(), start, agentTexture);
-                    for (int j = 0; j < numberOfActions; j++)
-                    {
-                        agents[i].Actions.Add(GenerateAction());
-                    }
-                }
 
+                Agent[] tempAgents = agents;
+
+
+                FindGoal(tempAgents);
 
                 currentStep = 0;
             }
-
 
 
             base.Update(gameTime);
@@ -168,5 +171,41 @@ namespace Game1
             else if (r == 2) { return new Vector2(-rnd.Next(1, maximumSpeed), 0); } // Left
             else { return new Vector2(rnd.Next(1, maximumSpeed), 0); } // Right
         }
+
+        void FindGoal(Agent[] tempAgents)
+        {
+            for (int i = 0; i < numberOfAgents; i++)
+            {
+
+                agents[i] = new Agent(agents[i].Actions, start, agentTexture);
+                for (int j = 0; j < numberOfActions; j++)
+                {
+                    int k = rnd.Next(0, 100);
+
+                    int r = rnd.Next(0, 100);
+
+                    if (r > mutationChance)
+                    {
+
+                        if (k <= 75)
+                        {
+                            agents[i].Actions[j] = tempAgents[0].Actions[j];
+                        }
+                        else if (k <= 99)
+                        {
+                            agents[i].Actions[j] = tempAgents[1].Actions[j];
+                        }
+                    }
+
+                    else
+                    {
+                        agents[i].Actions[j] = GenerateAction();
+                    }
+
+                    //agents[i].Actions.Add(GenerateAction());
+                }
+            }
+        }
+
     }
 }
