@@ -132,10 +132,7 @@ namespace Game1
 
                 // This code only creates a new random population and must be changed in order for the agents to show progress over time.
 
-                Agent[] tempAgents = agents;
-
-
-                FindGoal(tempAgents);
+                FindGoal();
 
                 currentStep = 0;
             }
@@ -172,32 +169,29 @@ namespace Game1
             else { return new Vector2(rnd.Next(1, maximumSpeed), 0); } // Right
         }
 
-        void FindGoal(Agent[] tempAgents)
+        void FindGoal()
         {
+            Agent[] tempAgents = agents;
             for (int i = 0; i < numberOfAgents; i++)
             {
-
                 agents[i] = new Agent(agents[i].Actions, start, agentTexture);
                 for (int j = 0; j < numberOfActions; j++)
                 {
-                    int k = rnd.Next(0, 100);
 
-                    int r = rnd.Next(0, 100);
+                    int fitnessForNxtGenChance = rnd.Next(0, 100);
 
-                    if (r > mutationChance)
+                    int chanceForMutation = rnd.Next(0, 100);
+
+                    if (fitnessForNxtGenChance <= 75)
                     {
-
-                        if (k <= 75)
-                        {
-                            agents[i].Actions[j] = tempAgents[0].Actions[j];
-                        }
-                        else if (k <= 99)
-                        {
-                            agents[i].Actions[j] = tempAgents[1].Actions[j];
-                        }
+                        agents[i].Actions[j] = tempAgents[0].Actions[j];
+                    }
+                    else if (fitnessForNxtGenChance <= 99)
+                    {
+                        agents[i].Actions[j] = tempAgents[1].Actions[j];
                     }
 
-                    else
+                    if (chanceForMutation <= mutationChance)
                     {
                         agents[i].Actions[j] = GenerateAction();
                     }
